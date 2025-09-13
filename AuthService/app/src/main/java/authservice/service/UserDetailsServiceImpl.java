@@ -1,6 +1,8 @@
 package authservice.service;
 
+import authservice.producer.UserInfoEvent;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import authservice.entities.UserInfo;
@@ -52,8 +54,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         String userId= UUID.randomUUID().toString();
         userRepository.save(new UserInfo(userId,userInfoDto.getUsername(),userInfoDto.getPassword(),new HashSet<>()));
         // send event to UserService using kafka
-        userInfoProducer.sendMessageToTopic(userInfoDto);
+        userInfoProducer.sendMessageToTopic(fetchUserInfoEvent(userInfoDto,userId));
         return true;
+    }
+    public UserInfoEvent fetchUserInfoEvent(UserInfoDto userInfoDto, String userId){
+        return UserInfoEvent.builder()
+                .userId(userId)
+                .firstName(userInfoDto.getFirstName())
+                .lastName(userInfoDto.getLastName())
+                .phoneNo(userInfoDto.getPhoneNumber())
+                .email(userInfoDto.getEmail())
+                .build();
     }
 
 }
