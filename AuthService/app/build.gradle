@@ -43,9 +43,17 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
     testImplementation "org.projectlombok:lombok:$lombokVersion"
 
+
     // JUnit 5 for testing
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+    // Includes JUnit 5, Mockito, AssertJ, and Spring Test context support
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Required for Gradle to run JUnit 5 tests in modern environments
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Lombok for Tests (to use @Slf4j or @Data in test classes)
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+
 
     // Guava
     implementation 'com.google.guava:guava:32.1.2-jre'
@@ -59,4 +67,7 @@ java {
 
 application {
     mainClass = 'authservice.App'
+}
+tasks.named('test') {
+    useJUnitPlatform()
 }
